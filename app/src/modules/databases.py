@@ -16,7 +16,8 @@ def get_connection_string():
     #     db_name}' user='{db_user}' password='{db_password}' sslmode='require'"
 
     conn_string = os.getenv("DATABASE_URL")
-
+    print('00000000000000000000000000000000000000000000000000000000000')
+    print(conn_string)
     return conn_string
 
 
@@ -315,10 +316,7 @@ class ConversationDB:
 
     async def insert_query(self, conversation_id, query, response, prompt, response_time, user_id):
         try:
-            self.logger.info(
-                f"Inserting query: {query} into conversation: {
-                    conversation_id}"
-            )
+            self.logger.info(f"Inserting query: {query} into conversation: {conversation_id}")
             conn = psycopg.connect(self.conn_string)
             cursor = conn.cursor()
             cursor.execute('''
