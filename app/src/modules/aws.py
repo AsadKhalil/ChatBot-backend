@@ -24,8 +24,7 @@ class AWS:
         paginator = self.s3_client.get_paginator('list_objects_v2')
         for page in paginator.paginate(Bucket=self.bucket_name):
             for obj in page.get('Contents', []):
-                url = f"https://{
-                    self.bucket_name}.s3.amazonaws.com/{obj['Key']}"
+                url = f"https://{self.bucket_name}.s3.amazonaws.com/{obj['Key']}"
                 urls[obj['Key']] = url
                 data.append({"filename": obj['Key'], "url": url})
         return data

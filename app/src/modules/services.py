@@ -308,8 +308,7 @@ You can use the following glossary to interpret the user's question:
             {"input": query, "chat_history": chat_history})
         self.logger.info("res: %s", res)
         retriever_query_creation_end_time = time.time()
-        self.logger.info(f"retriever query creation time: {
-                         retriever_query_creation_end_time - retriever_query_creation_start_time}")
+        self.logger.info(f"retriever query creation time: {retriever_query_creation_end_time - retriever_query_creation_start_time}")
         context_start_time = time.time()
         context = await retrieverchain.ainvoke(res)
         context_end_time = time.time()
