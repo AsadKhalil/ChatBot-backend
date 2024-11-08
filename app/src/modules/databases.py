@@ -92,6 +92,8 @@ class ConversationDB:
                 raise AttributeError(
                     'No connection string provided for conversation db')
             self.conn_string = conn_string
+            print(conn_string)
+            print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
             conn = psycopg.connect(conn_string)
             cursor = conn.cursor()
             # uncomment if you want to create the table again
