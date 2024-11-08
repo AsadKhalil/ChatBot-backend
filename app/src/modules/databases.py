@@ -94,7 +94,7 @@ class ConversationDB:
             self.conn_string = conn_string
             print(conn_string)
             print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-            conn = psycopg.connect(conn_string)
+            conn = psycopg.connect("postgresql://postgres:1234@localhost:5432/chatbot")
             cursor = conn.cursor()
             # uncomment if you want to create the table again
             # cursor.execute('DROP TABLE IF EXISTS queries')
