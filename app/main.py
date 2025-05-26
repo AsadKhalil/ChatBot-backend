@@ -54,12 +54,12 @@ if __name__ == '__main__':
 
     logging.info(f"current root directory: {current_dir}")
 
-    google_application_credentials = os.path.join(
-        current_dir, "firebase_creds.json")
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = google_application_credentials
+    # google_application_credentials = os.path.join(
+    #     current_dir, "firebase_creds.json")
+    # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = google_application_credentials
     print(current_dir)
-    check_environment(
-        env_variables=[OPENAI_API_KEY, GOOGLE_APPLICATION_CREDENTIALS, FIREBASE_API_KEY], logger=logging)
+    # check_environment(
+    #     env_variables=[OPENAI_API_KEY, GOOGLE_APPLICATION_CREDENTIALS, FIREBASE_API_KEY], logger=logging)
 
     log_config = uvicorn.config.LOGGING_CONFIG
     log_config["disable_existing_loggers"] = False

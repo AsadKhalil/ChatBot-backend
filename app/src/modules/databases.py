@@ -2,11 +2,12 @@ import logging
 import os
 import traceback
 from fastapi import HTTPException
-from langchain_postgres import PGVector
+from langchain_community.vectorstores import PGVector
 import psycopg
-import yaml
 from app.src import constants
 from langchain_openai import OpenAIEmbeddings
+from langchain_community.embeddings import OllamaEmbeddings
+from app.src.config import USE_OPENAI, get_embedding_model
 from app.src.modules.auth import Authentication
 
 
@@ -16,7 +17,7 @@ def get_connection_string():
     #     db_name}' user='{db_user}' password='{db_password}' sslmode='require'"
 
     conn_string = os.getenv("DATABASE_URL")
-    print('00000000000000000000000000000000000000000000000000000000000')
+    conn_string = 'postgresql://postgres:1234@localhost:5434/rag'
     print(conn_string)
     return conn_string
 
@@ -26,8 +27,8 @@ def get_alchemy_conn_string():
     # For reference:
     # conn_string = f"postgresql+psycopg://{db_user}:{
     #         db_password}@{db_host}:{db_port}/{db_name}"
-
-    conn_string = os.getenv("VECTORSTORE_URL")
+    conn_string = 'postgresql+psycopg://postgres:1234@localhost:5434/rag'
+    # conn_string = os.getenv("VECTORSTORE_URL")
 
     return conn_string
 
@@ -46,13 +47,16 @@ class PGVectorManager:
         self.logger.critical(f"Connection string: {self.connection_string}")
 
     def return_vector_store(self, collection_name, async_mode) -> PGVector:
+        if USE_OPENAI:
+            embeddings = OpenAIEmbeddings(model=get_embedding_model())
+        else:
+            embeddings = OllamaEmbeddings(model=get_embedding_model())
 
         self.vectorstore = PGVector(
-            embeddings=OpenAIEmbeddings(model=constants.EMBEDDINGS_MODEL),
+            embedding_function=embeddings,
             collection_name=collection_name,
-            connection=self.connection_string,
-            use_jsonb=True,
-            async_mode=async_mode
+            connection_string=self.connection_string,
+            use_jsonb=True
         )
         return self.vectorstore
 
@@ -240,10 +244,15 @@ class ConversationDB:
 
         self.conn = psycopg.connect(self.conn_string)
         cursor = self.conn.cursor()
+        # cursor.execute('''
+        #     SELECT u.name, u.email, q.file_name, q.url, q.created_at, q.updated_at, q.active
+        #     FROM public.files q 
+        #     join users u on q.user_id=u.id::text
+        #     order by q.created_at
+        #     desc''',)
         cursor.execute('''
-            SELECT u.name, u.email, q.file_name, q.url, q.created_at, q.updated_at, q.active
+            SELECT q.file_name, q.url, q.created_at, q.updated_at, q.active
             FROM public.files q 
-            join users u on q.user_id=u.id::text
             order by q.created_at
             desc''',)
 

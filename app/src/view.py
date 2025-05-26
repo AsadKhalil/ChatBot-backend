@@ -8,7 +8,7 @@ from typing_extensions import Annotated
 from fastapi import Depends, Response, UploadFile, HTTPException, APIRouter, File, Form
 from fastapi.responses import HTMLResponse
 from fastapi.security import OAuth2PasswordBearer
-from firebase_admin.auth import UserRecord
+# from firebase_admin.auth import UserRecord
 from app.src.rating import add_rating_data
 from app.src.data_types import ChangeRole, Conversation, Rating, Query, UpdateUser, Prompt, DeleteFile, ActiveFile
 from .modules.databases import ConversationDB
@@ -74,21 +74,21 @@ async def get_home_page():
 
 
 @router.post("/generate", response_class=HTMLResponse)
-async def get_chatbot_response(query: Query, current_user: Annotated[UserRecord, Depends(get_current_user)]):
+async def get_chatbot_response(query: Query):
     """route definition for chatbot"""
     try:
         start_time = time.time()
         logger.info(f"User's query: {query.input}")
-        user_id = current_user.uid
+        # user_id = current_user.uid
         # user_role = current_user.custom_claims.get('role')
         llm = await LLMAgentFactory().create()
         await llm._build_prompt()
         await llm._create_agent()
 
-        if current_user.custom_claims.get('local_id') is not None:
-            user_id = current_user.custom_claims.get('local_id')
-            logger.info(f"Current user's local id: {user_id}")
-
+        # if current_user.custom_claims.get('local_id') is not None:
+        #     user_id = current_user.custom_claims.get('local_id')
+        #     logger.info(f"Current user's local id: {user_id}")
+        user_id = 1
         conversation_id = None
 
         if not query.convo_id:  # Check if 'chat_history' is not present or empty
@@ -134,7 +134,7 @@ async def add_rating(data: Rating, current_user: Annotated[Any, Depends(get_curr
 
 
 @router.post("/conversation")
-async def get_conversation(data: Conversation, current_user: Annotated[Any, Depends(get_current_user)]):
+async def get_conversation(data: Conversation):
     try:
         # This commented out code is for getting the previous conversation data from the database
         # response = await get_conversation_data(data, current_user, db)
@@ -377,42 +377,41 @@ async def change_user_role_admin(current_user: Annotated[Any, Depends(get_curren
 
 
 @router.post("/create_knowledge_base")
-async def create_knowledge_base(files: Annotated[List[UploadFile], File()], current_user: Annotated[Any, Depends(get_current_user)]):
+async def create_knowledge_base(files: Annotated[List[UploadFile], File()]):
     """route definition for creation of a new knowledge base with multiple file upload"""
     try:
-        if current_user.custom_claims.get('local_id') is not None:
-            user_id = current_user.custom_claims.get('local_id')
-            logger.info(f"Current user's local id: {user_id}")
+        # if current_user.custom_claims.get('local_id') is not None:
+        #     user_id = current_user.custom_claims.get('local_id')
+        #     logger.info(f"Current user's local id: {user_id}")
 
         logger.info(type(files))
         logger.info(f"length of files {len(files)}")
         # return
         data = await new_knowledge_base(files=files)
-        _ = await db.add_files(data, user_id=user_id)
+        _ = await db.add_files(data, user_id=1)
         return "Knowledge Base updated successfully"
     except Exception as e:
         print(traceback.format_exc())
         print(sys.exc_info()[2])
         raise HTTPException(status_code=500, detail=str(e))
 
-
+# current_user: Annotated[Any, Depends(get_current_user)]
 @router.get("/list-files")
-async def list_files(current_user: Annotated[Any, Depends(get_current_user)]):
+async def list_files():
 
     try:
-        if current_user.custom_claims.get('role') != constants.ADMIN_ROLE:
-            raise HTTPException(status_code=401, detail="Unauthorised")
+        # if current_user.custom_claims.get('role') != constants.ADMIN_ROLE:
+        #     raise HTTPException(status_code=401, detail="Unauthorised")
         response = await db.get_files()
+        print(response)
         json_list = []
         for tup in response:
             json_dict = {
-                "name": tup[0],
-                "email": tup[1],
-                "filename": tup[2],
-                "url": tup[3],
-                "created_at": tup[4],
-                "updated_at": tup[5],
-                "active": tup[6],
+                "filename": tup[0],
+                "url": tup[1],
+                "created_at": tup[2],
+                "updated_at": tup[3],
+                "active": tup[4],
             }
             json_list.append(json_dict)
         return json_list
@@ -424,7 +423,7 @@ async def list_files(current_user: Annotated[Any, Depends(get_current_user)]):
 
 
 @router.post('/delete-file')
-async def delete_file(input: DeleteFile, current_user: Annotated[Any, Depends(get_current_user)]):
+async def delete_file(input: DeleteFile):
     try:
         aws = AWS()
         aws.delete_file(input.file_name)
@@ -437,7 +436,7 @@ async def delete_file(input: DeleteFile, current_user: Annotated[Any, Depends(ge
 
 
 @router.post("/file-active-toggle")
-async def file_active_toggle(input: ActiveFile, current_user: Annotated[Any, Depends(get_current_user)]):
+async def file_active_toggle(input: ActiveFile):
     """route for adding rating"""
     try:
 
@@ -451,17 +450,16 @@ async def file_active_toggle(input: ActiveFile, current_user: Annotated[Any, Dep
 
 # current_user: Annotated[Any, Depends(get_current_user)]
 @router.post("/prompts")
-async def add_prompt(prompt: Prompt, current_user: Annotated[Any, Depends(get_current_user)]):
+async def add_prompt(prompt: Prompt):
     """Endpoint for adding a new prompt."""
     try:
-        PROJECT_NAME = os.environ.get("PROJECT_NAME")
-        # Cache the prompt in Redis
-        await redis.set(f"{PROJECT_NAME}:llm_model", prompt.llm_model)
-        await redis.set(f"{PROJECT_NAME}:persona", prompt.persona)
-        await redis.set(f"{PROJECT_NAME}:glossary", prompt.glossary)
-        await redis.set(f"{PROJECT_NAME}:tone", prompt.tone)
-        await redis.set(f"{PROJECT_NAME}:response_length", prompt.response_length)
-        await redis.set(f"{PROJECT_NAME}:content", prompt.content)
+        # Store prompt parameters in environment variables
+        os.environ["LLM_MODEL"] = prompt.llm_model
+        os.environ["PERSONA"] = prompt.persona
+        os.environ["GLOSSARY"] = prompt.glossary
+        os.environ["TONE"] = prompt.tone
+        os.environ["RESPONSE_LENGTH"] = prompt.response_length
+        os.environ["CONTENT"] = prompt.content
 
         response = await db.insert_prompt(prompt)
         id_json = json.dumps(str(response))
@@ -473,21 +471,20 @@ async def add_prompt(prompt: Prompt, current_user: Annotated[Any, Depends(get_cu
 
 
 @router.get("/prompts")
-async def get_prompt(current_user: Annotated[Any, Depends(get_current_user)]):
-    if current_user.custom_claims.get('role') != 'Admin':
-        raise HTTPException(status_code=401, detail="Unauthorised")
-    else:
-        try:
-            response = await db.get_prompt()
-            return {
-                "llm_model": response[0],
-                "persona": response[1],
-                "glossary": response[2],
-                "tone": response[3],
-                "response_length": response[4],
-                "content": response[5]
-            }
-        except Exception as e:
-            print(traceback.format_exc())
-            print(sys.exc_info()[2])
-            raise HTTPException(status_code=500, detail=str(e))
+async def get_prompt():
+    # if current_user.custom_claims.get('role') != 'Admin':
+    #     raise HTTPException(status_code=401, detail="Unauthorised")
+    try:
+        response = await db.get_prompt()
+        return {
+            "llm_model": response[0],
+            "persona": response[1],
+            "glossary": response[2],
+            "tone": response[3],
+            "response_length": response[4],
+            "content": response[5]
+        }
+    except Exception as e:
+        print(traceback.format_exc())
+        print(sys.exc_info()[2])
+        raise HTTPException(status_code=500, detail=str(e))
