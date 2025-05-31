@@ -197,3 +197,13 @@ To deploy your FastAPI backend to a server and install PostgreSQL, here’s a st
 
 
 /home/asad/.cache/pypoetry/virtualenvs/backend-ufe2P_1B-py3.12/bin/python3
+sudo systemctl restart chatbot
+sudo ufw allow 8000
+sudo ufw allow 9000
+
+sudo systemctl daemon-reload
+
+# For Nginx
+sudo nginx -t
+sudo systemctl restart nginx
+sudo tail -f /var/log/nginx/access.log
