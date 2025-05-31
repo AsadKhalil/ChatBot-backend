@@ -17,7 +17,7 @@ def get_connection_string():
     #     db_name}' user='{db_user}' password='{db_password}' sslmode='require'"
 
     conn_string = os.getenv("DATABASE_URL")
-    conn_string = 'postgresql://postgres:1234@localhost:5434/rag'
+    # conn_string = 'postgresql://postgres:1234@localhost:5434/rag'
     print(conn_string)
     return conn_string
 
@@ -27,8 +27,8 @@ def get_alchemy_conn_string():
     # For reference:
     # conn_string = f"postgresql+psycopg://{db_user}:{
     #         db_password}@{db_host}:{db_port}/{db_name}"
-    conn_string = 'postgresql+psycopg://postgres:1234@localhost:5434/rag'
-    # conn_string = os.getenv("VECTORSTORE_URL")
+    # conn_string = 'postgresql+psycopg://postgres:1234@localhost:5434/rag'
+    conn_string = os.getenv("VECTORSTORE_URL")
 
     return conn_string
 
