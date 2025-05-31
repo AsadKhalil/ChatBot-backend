@@ -50,7 +50,7 @@ def get_model_config(use_openai: bool = True) -> str:
     Returns:
         str: Default model name
     """
-    return "gpt-3.5-turbo" if use_openai else "gemma3:27b"
+    return "gemma3:27b"
 
 def get_prompt_template(persona: str, glossary: str, tone: str, response_length: str, content: str, extra_info: str = "") -> str:
     """
