@@ -194,3 +194,6 @@ To deploy your FastAPI backend to a server and install PostgreSQL, here’s a st
 ---
 
 **Let me know if you need a script for any of these steps, or if you want to use Docker for deployment!**
+
+
+/home/asad/.cache/pypoetry/virtualenvs/backend-ufe2P_1B-py3.12/bin/python3

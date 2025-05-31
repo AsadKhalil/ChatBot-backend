@@ -15,7 +15,7 @@ OPENAI_MODELS = {
 OLLAMA_MODELS = {
     # "llama2": "llama2",
     # "mistral": "mistral",
-    "gemma": "gemma3:1b"
+    "gemma": "gemma3:27b"
 }
 
 # Embedding models
@@ -42,7 +42,7 @@ def get_model_name(model_id: str) -> str:
     if USE_OPENAI:
         return OPENAI_MODELS.get(model_id, "gpt-3.5-turbo")
     else:
-        return OLLAMA_MODELS.get(model_id, "gemma3:1b")
+        return OLLAMA_MODELS.get(model_id, "gemma3:27b")
 
 def get_embedding_model() -> str:
     """Get the embedding model based on configuration"""
