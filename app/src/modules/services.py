@@ -51,12 +51,9 @@ class LLMAgentFactory:
         # llm_id = await redis.get(f"{PROJECT_NAME}:llm_model",)
         # logger.info("llm_id: %s", llm_id)
 
-        if USE_OPENAI:
-            agent = OPENAIAgent()
-            return agent
-        else:
-            agent = OllamaAgent()
-            return agent
+
+        agent = OllamaAgent()
+        return agent
 
 
 class OPENAIAgent(Agent):

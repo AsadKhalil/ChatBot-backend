@@ -47,10 +47,8 @@ class PGVectorManager:
         self.logger.critical(f"Connection string: {self.connection_string}")
 
     def return_vector_store(self, collection_name, async_mode) -> PGVector:
-        if USE_OPENAI:
-            embeddings = OpenAIEmbeddings(model=get_embedding_model())
-        else:
-            embeddings = OllamaEmbeddings(model=get_embedding_model())
+
+        embeddings = OllamaEmbeddings(model=get_embedding_model())
 
         self.vectorstore = PGVector(
             embedding_function=embeddings,
