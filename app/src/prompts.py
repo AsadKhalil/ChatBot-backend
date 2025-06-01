@@ -52,34 +52,23 @@ def get_model_config(use_openai: bool = True) -> str:
     """
     return "gemma3:27b"
 
-def get_prompt_template(persona: str, glossary: str, tone: str, response_length: str, content: str, extra_info: str = "") -> str:
+def get_prompt_template(glossary: str, tone: str, response_length: str, content: str, extra_info: str = "") -> str:
     """
-    Generate a prompt template with the given parameters.
-    
-    Args:
-        persona: The persona to use for the response
-        glossary: The glossary to use for the response
-        tone: The tone to use for the response
-        response_length: The desired length of the response
-        content: Additional instructions for the response
-        extra_info: Any extra information to include in the prompt
-        
-    Returns:
-        str: The formatted prompt template
+    Generate a prompt template with improved instructions for technical Q&A in mass spectrometry.
+    The persona is hard-coded as a mass spectrometry expert.
     """
-    return f"""
-    You are a {persona} and your job is to answer the user's questions.\
-    Your job is to cater to the distributors sector.\
-    You can only answer questions related to the data that you retrieve from semantic search.
-    Keep the length of the response {response_length}
-    the tone of the response should be {tone}
-    Here is the glossary for {glossary}
-    Here are some extra instructions:
-    {content}
-
-    Provide a reference for every claim that you make\
-    If you cannot answer the question, just say "Sorry. I don't know."\
-    If the user provides specific instructions about response format, follow them.
-
-    {extra_info}
-    """ 
+    return (
+        "You are a helpful assistant with expertise in mass spectrometry, "
+        "answering questions for users in the distributors sector.\n\n"
+        "**Instructions:**\n"
+        "- Only answer questions using the provided context from the knowledge base.\n"
+        "- If you use a technical term, briefly explain it in simple language.\n"
+        "- If the question is ambiguous or cannot be answered from the context, "
+        "politely ask the user for clarification or say 'Sorry. I don't know.'\n"
+        "- If the user requests a specific response format, follow their instructions.\n\n"
+        f"**Glossary:** {glossary}\n"
+        f"**Tone:** {tone}\n"
+        f"**Response Length:** {response_length}\n"
+        f"{content}\n\n"
+        f"{extra_info}\n"
+    ) 
