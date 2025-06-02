@@ -5,7 +5,7 @@ import traceback
 from typing import Any, List
 import app.src.constants as constants
 from typing_extensions import Annotated
-from fastapi import Depends, Response, UploadFile, HTTPException, APIRouter, File, Form
+from fastapi import Depends, Response, UploadFile, HTTPException, APIRouter, File
 from fastapi.responses import HTMLResponse
 from fastapi.security import OAuth2PasswordBearer
 # from firebase_admin.auth import UserRecord
@@ -397,13 +397,9 @@ async def create_knowledge_base(files: Annotated[List[UploadFile], File()]):
 
 # current_user: Annotated[Any, Depends(get_current_user)]
 @router.get("/list-files")
-async def list_files():
-
+async def list_files(limit: int = 10, offset: int = 0):
     try:
-        # if current_user.custom_claims.get('role') != constants.ADMIN_ROLE:
-        #     raise HTTPException(status_code=401, detail="Unauthorised")
-        response = await db.get_files()
-        print(response)
+        response = await db.get_files(limit=limit, offset=offset)
         json_list = []
         for tup in response:
             json_dict = {
@@ -414,7 +410,12 @@ async def list_files():
                 "active": tup[4],
             }
             json_list.append(json_dict)
-        return json_list
+        return {
+            "files": json_list,
+            "limit": limit,
+            "offset": offset,
+            "count": len(json_list)
+        }
     except AttributeError:
         logger.exception(traceback.format_exc())
         logger.exception(sys.exc_info()[2])

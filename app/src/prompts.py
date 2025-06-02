@@ -52,10 +52,16 @@ def get_model_config(use_openai: bool = True) -> str:
     """
     return "gemma3:27b"
 
-def get_prompt_template(glossary: str, tone: str, response_length: str, content: str, extra_info: str = "") -> str:
+def get_prompt_template(
+    glossary: str,
+    tone: str,
+    response_length: str,
+    content: str,
+    extra_info: str = ""
+) -> str:
     """
-    Generate a prompt template with improved instructions for technical Q&A in mass spectrometry.
-    The persona is hard-coded as a mass spectrometry expert.
+    Generate a prompt template with improved instructions for technical Q&A in
+    mass spectrometry. The persona is hard-coded as a mass spectrometry expert.
     """
     return (
         "You are a helpful assistant with expertise in mass spectrometry, "
@@ -63,6 +69,8 @@ def get_prompt_template(glossary: str, tone: str, response_length: str, content:
         "**Instructions:**\n"
         "- Only answer questions using the provided context from the knowledge base.\n"
         "- If you use a technical term, briefly explain it in simple language.\n"
+        "- Always cite the source (e.g., 'See Figure 2, Page 5') "
+        "for every claim.\n"
         "- If the question is ambiguous or cannot be answered from the context, "
         "politely ask the user for clarification or say 'Sorry. I don't know.'\n"
         "- If the user requests a specific response format, follow their instructions.\n\n"

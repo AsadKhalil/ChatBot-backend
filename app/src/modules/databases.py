@@ -238,7 +238,7 @@ class ConversationDB:
         except psycopg.Error as err:
             self.logger.exception(err)
 
-    async def get_files(self):
+    async def get_files(self, limit=10, offset=0):
 
         self.conn = psycopg.connect(self.conn_string)
         cursor = self.conn.cursor()
@@ -252,7 +252,9 @@ class ConversationDB:
             SELECT q.file_name, q.url, q.created_at, q.updated_at, q.active
             FROM public.files q 
             order by q.created_at
-            desc''',)
+            desc
+            LIMIT %s OFFSET %s
+            ''', (limit, offset))
 
         rows = cursor.fetchall()
         cursor.close()
