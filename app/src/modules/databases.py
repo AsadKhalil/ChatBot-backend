@@ -855,3 +855,14 @@ class ConversationDB:
         cursor.close()
         self.conn.close()
         return rows
+
+    async def get_files_count(self):
+        self.conn = psycopg.connect(self.conn_string)
+        cursor = self.conn.cursor()
+        cursor.execute('''
+            SELECT COUNT(*) FROM public.files
+        ''')
+        count = cursor.fetchone()[0]
+        cursor.close()
+        self.conn.close()
+        return count

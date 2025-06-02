@@ -400,6 +400,7 @@ async def create_knowledge_base(files: Annotated[List[UploadFile], File()]):
 async def list_files(limit: int = 10, offset: int = 0):
     try:
         response = await db.get_files(limit=limit, offset=offset)
+        total_count = await db.get_files_count()
         json_list = []
         for tup in response:
             json_dict = {
@@ -414,7 +415,8 @@ async def list_files(limit: int = 10, offset: int = 0):
             "files": json_list,
             "limit": limit,
             "offset": offset,
-            "count": len(json_list)
+            "count": len(json_list),
+            "total_count": total_count
         }
     except AttributeError:
         logger.exception(traceback.format_exc())

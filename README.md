@@ -207,3 +207,72 @@ sudo systemctl daemon-reload
 sudo nginx -t
 sudo systemctl restart nginx
 sudo tail -f /var/log/nginx/access.log
+
+
+To view the contents of the `langchain_pg_embedding` table in the `public` schema of your PostgreSQL database from the command line, follow these steps:
+
+---
+
+### 1. **Connect to PostgreSQL**
+
+If you know your database name, user, and host, run:
+
+```sh
+psql -U your_username -d your_database -h your_host
+```
+
+- If running locally and using the default user:
+  ```sh
+  psql -U postgres -d your_database
+  ```
+
+If you are inside a Docker container, you may need to exec into it first.
+
+---
+
+### 2. **List Tables (Optional)**
+
+Once inside the `psql` prompt, you can list tables to confirm:
+
+```sql
+\dt public.*
+```
+
+---
+
+### 3. **View the Table Contents**
+
+To see all rows in the table:
+
+```sql
+SELECT * FROM public.langchain_pg_embedding;
+```
+
+If the table is large, you can limit the output:
+
+```sql
+SELECT * FROM public.langchain_pg_embedding LIMIT 10;
+```
+
+---
+
+### 4. **Exit psql**
+
+Type:
+```sh
+\q
+```
+
+---
+
+**If you want a single command to run from your shell (replace values as needed):**
+
+```sh
+psql -U your_username -d your_database -c "SELECT * FROM public.langchain_pg_embedding LIMIT 10;"
+```
+
+---
+
+**Let me know if you need help with credentials, connection strings, or if you want to filter or format the output!**
+
+sudo -u postgres psql
