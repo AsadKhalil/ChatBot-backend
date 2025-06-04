@@ -137,7 +137,6 @@ class OPENAIAgent(Agent):
         params = get_prompt_params()
 
         self.prompt = get_prompt_template(
-            persona=params["persona"],
             glossary=params["glossary"],
             tone=params["tone"],
             response_length=params["response_length"],
