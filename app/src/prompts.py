@@ -50,7 +50,7 @@ def get_model_config(use_openai: bool = True) -> str:
     Returns:
         str: Default model name
     """
-    return "gemma3:27b"
+    return "gemma3:12b"
 
 def get_prompt_template(
     glossary: str,

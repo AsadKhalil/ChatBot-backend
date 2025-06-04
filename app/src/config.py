@@ -15,7 +15,7 @@ OPENAI_MODELS = {
 OLLAMA_MODELS = {
     # "llama2": "llama2",
     # "mistral": "mistral",
-    "gemma": "gemma3:27b"
+    "gemma": "gemma3:12b"
 }
 
 # Embedding models
@@ -35,7 +35,7 @@ def get_available_models() -> Dict[str, List[str]]:
 def get_model_name(model_id: str) -> str:
     """Get the actual model name based on model ID"""
 
-    return OLLAMA_MODELS.get(model_id, "gemma3:27b")
+    return OLLAMA_MODELS.get(model_id, "gemma3:12b")
 
 def get_embedding_model() -> str:
     """Get the embedding model based on configuration"""
